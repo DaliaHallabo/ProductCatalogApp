@@ -1,0 +1,64 @@
+﻿@model ProductCatalogApp.Domain.Models.Product
+
+@{
+    ViewBag.Title = "Product Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-dark text-white text-center">
+                    <h2 class="mb-0">@Model.Name</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Price:</strong> @Model.Price.ToString("C")
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Category:</strong> @Model.Category?.Name 
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Start Date:</strong> @Model.StartDate.ToString("yyyy-MM-dd")
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Duration:</strong> @Model.DurationInDays Days
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            @if (!string.IsNullOrEmpty(Model.ImagePath))
+                            {
+                                <img src="@Model.ImagePath" alt="@Model.Name" class="img-fluid rounded shadow-sm" style="max-width: 100%; height: auto;" />
+                            }
+                            else
+                            {
+                                <p class="text-muted">No image available</p>
+                            }
+                        </div>
+                    </div>
+                    <hr />
+                    <div>
+                        @if (Model.LastUpdatedDateTime != null && !string.IsNullOrEmpty(Model.LastUpdatedByUserId))
+                        {
+                            <p><strong>Last Updated On:</strong> @Model.LastUpdatedDateTime?.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                            <p><strong>Last Updated By Admin ID:</strong> @Model.LastUpdatedByUserId</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No update information available.</p>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary me-2">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

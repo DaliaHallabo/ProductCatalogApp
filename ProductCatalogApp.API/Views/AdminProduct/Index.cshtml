@@ -1,0 +1,71 @@
+﻿@model IEnumerable<ProductCatalogApp.Domain.Models.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="display-6">Product List</h1>
+        <a href="@Url.Action("Create", "AdminProduct")" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Add New Product
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Start Date</th>
+                    <th>Duration (Days)</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var product in Model)
+                    {
+                        <tr>
+                            <td>@product.Name</td>
+                            <td>@product.Category.Name</td>
+                            <td>@product.Price.ToString("C")</td>
+                            <td>@product.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@product.DurationInDays</td>
+                            <td>
+                                <img src="@product.ImagePath" alt="@product.Name" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Actions">
+                                    <a href="@Url.Action("Details", "AdminProduct", new { id = product.Id })" class="btn btn-success btn-sm text-white">
+                                        <i class="bi bi-eye"></i> Details
+                                    </a>
+
+                                    <a href="@Url.Action("Edit", "AdminProduct", new { id = product.Id })" class="btn btn-warning btn-sm text-dark">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a href="@Url.Action("Delete", "AdminProduct", new { id = product.Id })" class="btn btn-danger btn-sm text-white">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">
+                            No products available.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

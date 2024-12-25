@@ -1,0 +1,137 @@
+﻿@using ProductCatalogApp.Domain.Models
+@model ProductCatalogApp.Domain.Models.Product
+
+@{
+    ViewData["Title"] = "Create Product";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="h4 mb-0">Create Product</h2>
+                </div>
+                <div class="card-body">
+                    <form id="createProductForm" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Product Name -->
+                        <div class="mb-3">
+                            <label for="Name" class="form-label"><strong>Product Name</strong></label>
+                            <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mb-3">
+                            <label for="Price" class="form-label"><strong>Price</strong></label>
+                            <input type="number" class="form-control" id="Price" name="Price" value="@Model.Price" step="0.01" required />
+                        </div>
+
+                        <!-- Start Date -->
+                        <div class="mb-3">
+                            <label for="StartDate" class="form-label"><strong>Start Date</strong></label>
+                            <input type="date" class="form-control" id="StartDate" name="StartDate" required />
+                        </div>
+
+
+                        <!-- Duration -->
+                        <div class="mb-3">
+                            <label for="DurationInDays" class="form-label"><strong>Duration (in Days)</strong></label>
+                            <input type="number" class="form-control" id="DurationInDays" name="DurationInDays" value="@Model.DurationInDays" required />
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label for="CategoryId" class="form-label"><strong>Category</strong></label>
+                            <select class="form-select" id="CategoryId" name="CategoryId" required>
+                                <option value="">Select Category</option>
+                                @foreach (var category in ViewBag.Categories as IEnumerable<ProductCatalogApp.Domain.Models.Category>)
+                                {
+                                    <option value="@category.Id">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Product Image -->
+                        <div class="mb-3">
+                            <label for="Image" class="form-label"><strong>Product Image</strong></label>
+                            <input type="file" class="form-control" id="Image" name="image" required />
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-success" id="submitForm">
+                                <i class="bi bi-plus-circle"></i> Create
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="validationModal" tabindex="-1" aria-labelledby="validationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="validationModalLabel">Validation Error</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="validationMessage">
+                <!-- Error message will appear here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+        // Set the default value of the StartDate input field
+        document.getElementById('StartDate').value = today;
+    });
+
+    document.getElementById('submitForm').addEventListener('click', function (e) {
+        const name = document.getElementById('Name').value.trim();
+        const price = document.getElementById('Price').value.trim();
+        const startDate = document.getElementById('StartDate').value.trim();
+        const duration = document.getElementById('DurationInDays').value.trim();
+        const categoryId = document.getElementById('CategoryId').value;
+        const image = document.getElementById('Image').files[0];
+        let errorMessage = '';
+
+        // Validate required fields
+        if (!name) errorMessage += 'Product Name is required.<br>';
+        if (!price || price <= 0) errorMessage += 'Price must be greater than 0.<br>';
+        if (!startDate) errorMessage += 'Start Date is required.<br>';
+        if (!duration || duration <= 0) errorMessage += 'Duration must be greater than 0.<br>';
+        if (!categoryId) errorMessage += 'Please select a valid category.<br>';
+
+        // Validate image file
+        if (!image) {
+            errorMessage += 'Product image is required.<br>';
+        } else if (!['image/jpeg', 'image/png', 'image/jpg'].includes(image.type)) {
+            errorMessage += 'Product image must be a JPG, JPEG, or PNG file.<br>';
+        } else if (image.size > 1048576) { // 1MB
+            errorMessage += 'Product image size must not exceed 1MB.<br>';
+        }
+
+        if (errorMessage) {
+            document.getElementById('validationMessage').innerHTML = errorMessage;
+            const validationModal = new bootstrap.Modal(document.getElementById('validationModal'));
+            validationModal.show();
+        } else {
+            // Submit the form if no errors
+            document.getElementById('createProductForm').submit();
+        }
+    });
+</script>
+
